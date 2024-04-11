@@ -4,7 +4,7 @@ Servo miServo;  // Crea un objeto servo para controlar el SG90
 const int trigger = 10;
 const int echo = 11;
 const int fotoresistor = A0;
-const int servo = 12;
+const int servo = 9;
 
 void setup() 
 {
@@ -12,6 +12,7 @@ void setup()
   pinMode(trigger, OUTPUT);
   pinMode(echo, INPUT);
   miServo.write(0);  // Posición inicial del servo
+  Serial.begin(9600);
 }
 
 void loop() 
@@ -30,28 +31,26 @@ void loop()
 
   // Se lee la luz del entorno
   int luz = analogRead(fotoresistor);
+  Serial.println(luz);
+  Serial.println(distancia);
+  
 
   // Si la distancia es mayor  o igual a 80 y la luz es alta
-  if (distancia >= 80 && luz > 900) 
+  if (distancia >= 80 && luz > 250) 
   {
     miServo.write(180);
   }
-  // Asumiendo "poca luz" como <= 900 y l
-  else if (distancia <= 30 && luz <= 900) 
+  // Asumiendo "poca luz" como <= 300 y l
+  if (distancia <= 30 &&  luz <= 250) 
   {
     miServo.write(60);
   }
   // Si la lectura es 0 no hay luz y la distancia es 2
-  else if (distancia == 2 && luz == 0) 
+  if (distancia <= 2 && luz < 50) 
   {
     miServo.write(0);
-  } 
-  // En el caso de que no se cumpla nada se moverá 10 grados
-  else 
-  {
-    miServo.write(10);
   }
 
   // Retraso para dar tiempo al servo a moverse y estabilizarse
-  delay(1000);
+  delay(100);
 }
