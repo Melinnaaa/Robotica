@@ -32,12 +32,12 @@ void loop()
   int luz = analogRead(fotoresistor);
 
   // Si la distancia es mayor  o igual a 80 y la luz es alta
-  if (distancia >= 80 && luz > 512) 
+  if (distancia >= 80 && luz > 900) 
   {
     miServo.write(180);
   }
-  // Asumiendo "poca luz" como <= 512 y l
-  else if (distancia <= 30 && luz <= 512) 
+  // Asumiendo "poca luz" como <= 900 y l
+  else if (distancia <= 30 && luz <= 900) 
   {
     miServo.write(60);
   }
@@ -49,7 +49,7 @@ void loop()
   // En el caso de que no se cumpla nada se moverá 10 grados
   else 
   {
-  // miServo.write(10);
+    miServo.write(10);
   }
 
   // Retraso para dar tiempo al servo a moverse y estabilizarse
