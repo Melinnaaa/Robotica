@@ -3,8 +3,8 @@ import time
 import json
 from datetime import datetime
 
-# Actualiza 'COM9' con el puerto correcto de tu Arduino
-ser = serial.Serial('COM9', 9600)  # Asegúrate de usar el puerto correcto
+
+ser = serial.Serial('COM9', 9600) 
 time.sleep(2)
 
 setpoint = 30.0
@@ -21,7 +21,7 @@ data_log = []
 def pid_control(error, time_change):
     global integral, last_error
     integral += error * time_change
-    integral = max(min(integral, 50), -50)  # Limita el término integral
+    integral = max(min(integral, 50), -50)  # Limita el término integral entre -50 y 50
     derivative = (error - last_error) / time_change
     output = kp * error + ki * integral + kd * derivative
     last_error = error
