@@ -319,18 +319,19 @@ def heuristic(a, b):
 
 # Algoritmo A* para encontrar el camino más corto con movimientos diagonales
 def a_star_search(start, goal, grid):
-    # Posibles movimientos: derecha, abajo, izquierda, arriba, y diagonales
+    # Lista de posibles movimientos incluyendo movimientos diagonales
     neighbors = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (-1, -1), (1, -1), (-1, 1)]
-    close_set = set()
-    came_from = {}
-    gscore = {start: 0}
-    fscore = {start: heuristic(start, goal)}
-    oheap = PriorityQueue()
+    close_set = set()  # Conjunto de nodos evaluados
+    came_from = {}  # Diccionario para reconstruir el camino
+    gscore = {start: 0}  # Costo desde el inicio hasta el nodo actual
+    fscore = {start: heuristic(start, goal)}  # Costo estimado total desde el inicio hasta el objetivo
+    oheap = PriorityQueue()  # Cola de prioridad para seleccionar el nodo con el menor costo estimado
     oheap.put((fscore[start], start))
     
     while not oheap.empty():
-        current = oheap.get()[1]
+        current = oheap.get()[1]  # Seleccionar el nodo con el menor costo estimado
 
+        # Si el nodo actual es el objetivo, reconstruir y devolver el camino
         if current == goal:
             data = []
             while current in came_from:
@@ -340,19 +341,22 @@ def a_star_search(start, goal, grid):
             data.reverse()  # Invertir el camino
             return data
 
-        close_set.add(current)
-        for i, j in neighbors:
+        close_set.add(current)  # Añadir el nodo actual al conjunto de nodos evaluados
+        for i, j in neighbors:  # Evaluar cada vecino del nodo actual
             neighbor = current[0] + i, current[1] + j
             tentative_g_score = gscore[current] + heuristic(current, neighbor)
+            # Comprobar si el vecino está dentro de los límites del grid y no es un obstáculo
             if 0 <= neighbor[0] < grid.shape[0] and 0 <= neighbor[1] < grid.shape[1]:
                 if grid[neighbor[0]][neighbor[1]] == 1:
                     continue
             else:
                 continue
             
+            # Si el vecino ya ha sido evaluado y el nuevo costo no es mejor, continuar
             if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
                 continue
             
+            # Si el nuevo camino al vecino es mejor, actualizar los costos y añadir a la cola de prioridad
             if tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap.queue]:
                 came_from[neighbor] = current
                 gscore[neighbor] = tentative_g_score
@@ -369,6 +373,7 @@ def move_robot_to_goal(robot_position, goal_position, map_grid):
             next_step = path[1]  # La primera posición es la actual, la segunda es el siguiente paso
             x, y = robot_position
             nx, ny = next_step
+            # Determinar la dirección del movimiento y enviar el comando correspondiente
             if nx > x and ny == y:
                 ser.write("FORWARD\n".encode())
             elif nx < x and ny == y:
@@ -383,7 +388,8 @@ def move_robot_to_goal(robot_position, goal_position, map_grid):
                 ser.write("FORWARD_LEFT\n".encode())   
             elif nx < x and ny > y:
                 ser.write("BACKWARD_RIGHT\n".encode()) 
-                ser.write("BACKWARD_LEFT\n".encode())  
+            elif nx < x and ny < y:
+                ser.write("BACKWARD_LEFT\n".encode()) 
             return next_step
         else:
             print("El camino encontrado tiene menos pasos de los esperados.")
