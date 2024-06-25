@@ -93,14 +93,14 @@ void loop() {
         turning = true;
       }
       if (turnDirection) {
-        turnLeft(75); // Gira a la izquierda con velocidad ligeramente reducida
+        turnLeft(map(distance, 4, MAX_DISTANCE, 45, 130)); // Gira a la izquierda con velocidad mapeada
       } else {
-        turnRight(75); // Gira a la derecha con velocidad ligeramente reducida
+        turnRight(map(distance, 4, MAX_DISTANCE, 45, 130)); // Gira a la derecha con velocidad mapeada
       }
       delay(1000); // Espera un poco antes de verificar de nuevo
     } else {
       turning = false;
-      int motorSpeed = map(distance, 10, MAX_DISTANCE, 45, 100); // Ajusta la velocidad en función de la distancia
+      int motorSpeed = map(distance, 4, MAX_DISTANCE, 45, 130); // Ajusta la velocidad en función de la distancia
       moveForward(motorSpeed);
       delay(500); // Delay para el movimiento
     }
@@ -123,8 +123,15 @@ void loop() {
 }
 
 // Comandos para el control remoto mediante la aplicación
+/*
+  map funciona de la siguiente forma: 
+    int speed = map(distance, min_distance, max_distance, min_speed, max_speed);
+  
+  Por lo que a partir de la distancia que lee actualmente el sensor se mapea la velocidad para evitar
+  ir muy rápido al estar cerca de un obstaculo.
+*/
 void handleRemoteControl(String command) {
-  int speed = 75;  
+  int speed = map(distance, 4, MAX_DISTANCE, 45, 130);  
   if (command == "FORWARD") {
     moveForward(speed);
   } else if (command == "BACKWARD") {
@@ -148,7 +155,7 @@ void handleRemoteControl(String command) {
 
 // Sigue los comandos que manda la raspberry respecto a la posición de la mascota
 void handlePetCommand(String command) {
-  int speed = 75;  
+  int speed = map(distance, 4, MAX_DISTANCE, 45, 130);  
   String position = command.substring(4);
   if (position == "forward") {
     moveForward(speed);
@@ -159,9 +166,8 @@ void handlePetCommand(String command) {
   }
 }
 
-
 void handleMoveCommand(String direction) {
-  int speed = 75;  
+  int speed = map(distance, 4, MAX_DISTANCE, 45, 130);  
   if (direction == "forward") {
     moveForward(speed);
   } else if (direction == "left") {
